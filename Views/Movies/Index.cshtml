@@ -1,0 +1,19 @@
+﻿@model List<CinemaBooking.Models.Movie>
+
+<h2>Danh sách phim</h2>
+
+@if (Model != null && Model.Count > 0)
+{
+    <ul>
+        @foreach (var movie in Model)
+        {
+            <li>
+                <strong>@movie.Title</strong> - @movie.Genre - @movie.ReleaseDate.ToString("yyyy-MM-dd")
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>Không có phim nào trong cơ sở dữ liệu.</p>
+}
