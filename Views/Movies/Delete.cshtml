@@ -1,0 +1,15 @@
+﻿@model CinemaBooking.Models.Movie
+
+<h2>Xóa phim</h2>
+
+<div class="alert alert-danger">
+    Bạn có chắc muốn xóa phim <strong>@Model.Title</strong> không?
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <button type="submit" class="btn btn-danger">Xóa</button>
+    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+</form>
+

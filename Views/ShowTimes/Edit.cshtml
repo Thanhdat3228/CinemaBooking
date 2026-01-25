@@ -1,0 +1,20 @@
+﻿@model CinemaBooking.Models.ShowTime
+
+<h2>Sửa lịch chiếu</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <label class="form-label">Phim</label>
+        <select asp-for="MovieId" class="form-select" asp-items="ViewBag.MovieId"></select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Thời gian chiếu</label>
+        <input asp-for="TimeSlot" type="datetime-local" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Cập nhật</button>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</form>

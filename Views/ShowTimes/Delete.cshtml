@@ -1,0 +1,16 @@
+﻿@model CinemaBooking.Models.ShowTime
+
+<h2>Xóa lịch chiếu</h2>
+
+<p>Bạn có chắc muốn xóa lịch chiếu này?</p>
+
+<ul>
+    <li><strong>Phim:</strong> @Model.Movie?.Title</li>
+    <li><strong>Thời gian:</strong> @Model.TimeSlot.ToString("dd/MM/yyyy HH:mm")</li>
+</ul>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Xóa</button>
+    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+</form>
