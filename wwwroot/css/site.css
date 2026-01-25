@@ -18,7 +18,7 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+  margin-bottom: 0;
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
@@ -29,3 +29,64 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+/* ===== Movie Card UI ===== */
+.movie-card img {
+    height: 280px;
+    object-fit: cover;
+}
+
+.movie-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .movie-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .movie-card .card-body {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .movie-card .card-text {
+        font-size: 0.9rem;
+        color: #555;
+        flex-grow: 1;
+    }
+
+    .movie-card .btn {
+        margin-top: auto;
+    }
+
+    footer {
+        position: static !important;
+    }
+
+    main {
+        padding-bottom: 120px;
+    }
+
+    .movie-poster {
+        height: 160px;
+        width: 110px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    table tbody tr:hover {
+        background-color: #f8f9fa;
+        transition: 0.2s;
+    }
+
+    .btn-group .btn {
+        margin-right: 4px;
+    }
+    .card-header h4 {
+        font-weight: 600;
+    }
+
+    .form-label {
+        font-weight: 500;
+    }
+

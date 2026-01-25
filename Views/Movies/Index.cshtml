@@ -1,19 +1,64 @@
 ﻿@model List<CinemaBooking.Models.Movie>
 
-<h2>Danh sách phim</h2>
+@{
+    ViewData["Title"] = "Danh sách phim";
+}
 
-@if (Model != null && Model.Count > 0)
-{
-    <ul>
-        @foreach (var movie in Model)
-        {
-            <li>
-                <strong>@movie.Title</strong> - @movie.Genre - @movie.ReleaseDate.ToString("yyyy-MM-dd")
-            </li>
-        }
-    </ul>
-}
-else
-{
-    <p>Không có phim nào trong cơ sở dữ liệu.</p>
-}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>🎬 Danh sách phim</h2>
+    <a asp-action="Create" class="btn btn-primary">
+        ➕ Thêm phim
+    </a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Poster</th>
+                <th>Tên phim</th>
+                <th>Thể loại</th>
+                <th>Thời lượng</th>
+                <th>Ngày phát hành</th>
+                <th class="text-center">Hành động</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var movie in Model)
+            {
+                <tr>
+                    <td style="width:120px">
+                        <img src="@movie.PosterUrl"
+                             class="img-thumbnail movie-poster"
+                             alt="@movie.Title" />
+                    </td>
+
+                    <td class="fw-semibold">@movie.Title</td>
+                    <td>@movie.Genre</td>
+                    <td>@movie.DurationMinutes phút</td>
+                    <td>@movie.ReleaseDate.ToString("dd/MM/yyyy")</td>
+
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a asp-action="Edit" asp-route-id="@movie.Id"
+                               class="btn btn-sm btn-warning">
+                                Edit
+                            </a>
+
+                            <a asp-action="Details" asp-route-id="@movie.Id"
+                               class="btn btn-sm btn-info text-white">
+                                Details
+                            </a>
+
+                            <a asp-action="Delete" asp-route-id="@movie.Id"
+                               class="btn btn-sm btn-danger">
+                                Delete
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

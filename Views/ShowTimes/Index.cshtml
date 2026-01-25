@@ -1,0 +1,59 @@
+﻿@model List<CinemaBooking.Models.ShowTime>
+
+<h2 class="mb-3">🎬 Danh sách lịch chiếu</h2>
+
+<a asp-action="Create" class="btn btn-primary mb-3">
+    ➕ Thêm lịch chiếu
+</a>
+
+<table class="table table-bordered align-middle text-center">
+    <thead class="table-dark">
+        <tr>
+            <th>Poster</th>
+            <th>Tên phim</th>
+            <th>Rạp</th>
+            <th>Thời gian chiếu</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var st in Model)
+        {
+            <tr>
+                <td style="width:120px" class="text-center">
+                    @if (!string.IsNullOrEmpty(st.Movie?.PosterUrl))
+                    {
+                        <img src="@st.Movie.PosterUrl"
+                             width="90"
+                             class="rounded shadow-sm" />
+                    }
+                </td>
+
+                <td class="fw-semibold text-start ps-3">
+                    @st.Movie?.Title
+                </td>
+
+                <td>
+                    @st.Cinema?.Name
+                </td>
+
+                <td>
+                    @st.TimeSlot.ToString("dd/MM/yyyy HH:mm")
+                </td>
+
+                <td>
+                    <div class="btn-group">
+                        <a asp-action="Edit"
+                           asp-route-id="@st.Id"
+                           class="btn btn-warning btn-sm">Edit</a>
+
+                        <a asp-action="Delete"
+                           asp-route-id="@st.Id"
+                           class="btn btn-danger btn-sm">Delete</a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

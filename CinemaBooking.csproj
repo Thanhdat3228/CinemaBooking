@@ -7,6 +7,16 @@
     <UserSecretsId>aspnet-CinemaBooking-d1cc4bd1-6204-4e1c-9528-65de679d759e</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Views\Movies\Create.cs" />
+    <Compile Remove="Views\Movies\Create.cshtml.cs" />
+    <Compile Remove="Views\Movies\Delete.cshtml.cs" />
+    <Compile Remove="Views\Movies\Details.cshtml.cs" />
+    <Compile Remove="Views\Movies\Edit.cshtml.cs" />
+    <Compile Remove="Views\ShowTimes\Delete.cshtml.cs" />
+    <Compile Remove="Views\ShowTimes\Edit.cshtml.cs" />
+  </ItemGroup>
+
 	<ItemGroup>
 
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />

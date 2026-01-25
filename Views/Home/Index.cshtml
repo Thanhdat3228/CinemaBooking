@@ -1,4 +1,6 @@
-﻿@{
+﻿@model List<CinemaBooking.Models.Movie>
+
+@{
     ViewData["Title"] = "Trang chủ";
 }
 
@@ -6,37 +8,42 @@
     <div class="card mb-4 shadow">
         <div class="row g-0">
             <div class="col-md-6">
-                <img src="images/dune2.jpg" class="img-fluid rounded-start" alt="Dune: Part Two" >
-
+                <img src="images/dune2.jpg" class="img-fluid rounded-start">
             </div>
             <div class="col d-flex flex-column justify-content-center p-4">
                 <h5 class="card-title">FEATURE</h5>
                 <h2>Dune: Part Two</h2>
-                <p>Paul Atreides unites with Chani the Fremen while on a warpath of revenge against the conspirators who destroyed his family.</p>
+                <p>Paul Atreides unites with Chani the Fremen...</p>
                 <div>
                     <a href="/ShowTimes?Book?movieId=2" class="btn btn-warning me-2">Book Tickets</a>
                     <a href="/Movies/Details/2" class="btn btn-dark">More Info</a>
-
                 </div>
             </div>
         </div>
-    </div>    
+    </div>
 </div>
 
-<h3> Now Showing</h3>
+<h3 class="mb-4 mt-5">🎬 Now Showing</h3>
+
+
 <div class="row">
     @foreach (var movie in Model)
     {
-        <div class="col mb-4">
-            <div class="card h-100 shadow-sm">
+        <div class="col-md-3 mb-4">
+            <div class="card h-100 shadow-sm movie-card">
                 <img src="@movie.PosterUrl" class="card-img-top" alt="@movie.Title">
                 <div class="card-body">
                     <h5 class="card-title">@movie.Title</h5>
-                    <p class="card-text">@movie.Description.Substring(0, Math.Min(100, movie.Description.Length))...</p>
+
+                    <p class="card-text">
+                        @(string.IsNullOrEmpty(movie.Description)
+                                            ? "Đang cập nhật nội dung..."
+                                            : movie.Description.Substring(0, Math.Min(100, movie.Description.Length)) + "...")
+                    </p>
+
                     <a href="/Movies/Details/@movie.Id" class="btn btn-outline-primary">More Info</a>
                 </div>
-                </div>
             </div>
+        </div>
     }
-    </div>
-    </div>
+</div>
