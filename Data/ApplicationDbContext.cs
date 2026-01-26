@@ -14,4 +14,6 @@ public class ApplicationDbContext: DbContext
     public DbSet<Booking> Bookings { get; set; }
     public DbSet<ShowTime> ShowTimes { get; set; }
     public DbSet<User> users { get; set; }
+    public DbSet<Seat> Seats { get; set; }
+    public DbSet<Ticket> Tickets { get; set; }
 }
