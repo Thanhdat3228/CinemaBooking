@@ -1,0 +1,68 @@
+@model List<CinemaBooking.Models.Booking>
+
+@{
+    ViewData["Title"] = "Vé của tôi";
+}
+
+<div class="container mt-5">
+    <h2>🎫 Vé của tôi</h2>
+
+    <!-- Nếu danh sách vé trống: hiển thị thông báo -->
+    @if (Model.Count == 0)
+    {
+        <div class="alert alert-warning">
+            <strong>Bạn chưa đặt vé nào.</strong> 
+            <a href="/">Xem phim ngay</a>
+        </div>
+    }
+    else
+    {
+        <!-- Bảng hiển thị danh sách vé -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>🎬 Phim</th>           <!-- Tên phim -->
+                    <th>🪑 Ghế</th>             <!-- Số ghế -->
+                    <th>⏰ Giờ chiếu</th>        <!-- Thời gian chiếu -->
+                    <th>⚙️ Hành động</th>       <!-- Button hủy vé -->
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Lặp qua từng booking (vé) -->
+                @foreach (var booking in Model)
+                {
+                    <tr>
+                        <!-- Lấy tên phim từ booking.ShowTime.Movie.Title -->
+                        <td>@booking.ShowTime.Movie.Title</td>
+                        
+                        <!-- Lấy số ghế từ booking.Seat.SeatNumber -->
+                        <td><strong>@booking.Seat.SeatNumber</strong></td>
+                        
+                        <!-- Lấy giờ chiếu và format ngày/giờ -->
+                        <td>@booking.ShowTime.TimeSlot.ToString("dd/MM/yyyy HH:mm")</td>
+                        
+                        <!-- Button hủy vé -->
+                        <td>
+                            <!-- Form POST gửi tới action CancelBooking -->
+                            <form method="post" action="/Booking/CancelBooking" style="display: inline;">
+                                <!-- Hidden input: gửi ID vé cần hủy -->
+                                <input type="hidden" name="bookingId" value="@booking.Id" />
+                                
+                                <!-- Button hủy vé với xác nhận -->
+                                <!-- onclick="return confirm(...)" hiển thị hộp thoại xác nhận -->
+                                <button type="submit" 
+                                        class="btn btn-sm btn-danger" 
+                                        onclick="return confirm('Chắc chắn hủy vé này?')">
+                                    ❌ Hủy vé
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    <!-- Link quay về trang chủ -->
+    <a href="/" class="btn btn-secondary mt-3">🏠 Quay về trang chủ</a>
+</div>

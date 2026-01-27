@@ -1,0 +1,184 @@
+@{
+    ViewBag.Title = "Xác Nhận Đặt Vé";
+    var confirmViewModel = Model;
+    var booking = confirmViewModel.Booking;
+    var ticket = confirmViewModel.Ticket;
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Card xác nhận thành công -->
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle"></i>
+                <strong>Đặt vé thành công!</strong> Vé của bạn đã được lưu. Hãy lưu mã vé để xác minh tại rạp.
+            </div>
+
+            <!-- Thông tin vé -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-ticket-alt"></i> Thông Tin Vé
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Mã vé nổi bật -->
+                    <div class="mb-4 p-3" style="background-color: #f8f9fa; border-left: 4px solid #007bff; border-radius: 5px;">
+                        <p class="text-muted mb-1">Mã Vé</p>
+                        <h3 style="color: #007bff; font-weight: bold;">@ticket.TicketCode</h3>
+                        <p class="text-muted text-sm">Lưu mã vé này để xác minh tại rạp</p>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Phim</h6>
+                            <p>@booking.ShowTime.Movie.Title</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Rạp</h6>
+                            <p>@booking.ShowTime.Cinema.Name</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Ngày & Giờ Chiếu</h6>
+                            <p>@booking.ShowTime.TimeSlot.ToString("dd/MM/yyyy HH:mm")</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Ghế</h6>
+                            <p style="font-weight: bold; color: #28a745;">@booking.Seat.SeatNumber</p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Giá Vé</h6>
+                            <p>@ticket.Price.ToString("N0") VNĐ</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Trạng Thái</h6>
+                            <span class="badge bg-success">@ticket.Status</span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <p class="text-muted">
+                        <strong>Ngày phát hành vé:</strong> @ticket.IssuedDate.ToString("dd/MM/yyyy HH:mm:ss")
+                    </p>
+                </div>
+            </div>
+
+            <!-- Thông tin khách hàng -->
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user"></i> Thông Tin Khách Hàng
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Email</h6>
+                            <p>@booking.User.Email</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Ngày Đặt</h6>
+                            <p>@booking.BookingDate.ToString("dd/MM/yyyy HH:mm:ss")</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hướng dẫn -->
+            <div class="alert alert-info">
+                <h5>
+                    <i class="fas fa-info-circle"></i> Hướng Dẫn
+                </h5>
+                <ul class="mb-0">
+                    <li>Trình lên mã vé <strong>@ticket.TicketCode</strong> tại quầy bán vé hoặc cổng kiểm soát của rạp.</li>
+                    <li>Vui lòng có mặt ít nhất <strong>15 phút</strong> trước giờ chiếu.</li>
+                    <li>Kiểm tra lại thông tin ghế trước khi vào rạp chiếu phim.</li>
+                </ul>
+            </div>
+
+            <!-- Nút hành động -->
+            <div class="d-flex gap-2 mb-4">
+                <a href="@Url.Action("MyTickets", "Booking", new { userId = booking.UserId })" class="btn btn-primary btn-lg">
+                    <i class="fas fa-list"></i> Xem Vé Của Tôi
+                </a>
+                <a href="@Url.Action("Index", "Home")" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-home"></i> Về Trang Chủ
+                </a>
+                <button onclick="window.print()" class="btn btn-warning btn-lg">
+                    <i class="fas fa-print"></i> In Vé
+                </button>
+            </div>
+
+            <!-- In vé -->
+            <div class="card mt-4 d-none d-print-block">
+                <div class="card-body text-center p-5" style="border: 3px dashed #333;">
+                    <h2 style="font-weight: bold;">VÉ XEM PHIM</h2>
+                    <hr style="border-top: 2px dashed #333;">
+                    
+                    <h4>@booking.ShowTime.Movie.Title</h4>
+                    <p style="font-size: 18px; margin: 15px 0;">
+                        @booking.ShowTime.TimeSlot.ToString("dd/MM/yyyy HH:mm")
+                    </p>
+                    
+                    <p style="font-size: 16px;">
+                        Rạp: <strong>@booking.ShowTime.Cinema.Name</strong><br>
+                        Ghế: <strong style="color: #28a745; font-size: 24px;">@booking.Seat.SeatNumber</strong>
+                    </p>
+
+                    <hr style="border-top: 2px dashed #333;">
+                    
+                    <h3 style="letter-spacing: 2px; font-weight: bold; margin: 20px 0;">@ticket.TicketCode</h3>
+                    
+                    <p style="font-size: 12px; margin-top: 15px; color: #666;">
+                        Vé này có giá trị cho suất chiếu đã chỉ định. Vui lòng trình vé tại quầy hoặc cổng kiểm soát.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border: none;
+    }
+
+    .card-header {
+        border-bottom: none;
+        padding: 1.25rem;
+    }
+
+    .fw-bold {
+        font-weight: 600 !important;
+    }
+
+    @media print {
+        body {
+            background: white;
+        }
+
+        .btn, .alert, .d-print-none {
+            display: none !important;
+        }
+
+        .d-print-block {
+            display: block !important;
+        }
+
+        .card {
+            page-break-inside: avoid;
+            box-shadow: none;
+            border: 1px solid #ddd;
+        }
+    }
+</style>

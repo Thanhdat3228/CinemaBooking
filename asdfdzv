@@ -1,0 +1,135 @@
+[1mdiff --git a/Controllers/BookingController.cs b/Controllers/BookingController.cs[m
+[1mindex 1771753..1a84748 100644[m
+[1m--- a/Controllers/BookingController.cs[m
+[1m+++ b/Controllers/BookingController.cs[m
+[36m@@ -1,6 +1,202 @@[m
+[31m-﻿namespace CinemaBooking.Controllers[m
+[32m+[m[32m﻿using CinemaBooking.Data;[m
+[32m+[m[32musing CinemaBooking.Models;[m
+[32m+[m[32musing Microsoft.AspNetCore.Mvc;[m
+[32m+[m[32musing Microsoft.EntityFrameworkCore;[m
+[32m+[m
+[32m+[m[32mnamespace CinemaBooking.Controllers[m
+ {[m
+[31m-    public class BookingController[m
+[32m+[m[32m    public class BookingController : Controller[m
+     {[m
+[32m+[m[32m        private readonly ApplicationDbContext _context;[m
+[32m+[m
+[32m+[m[32m        // Constructor: Nhận DbContext từ Dependency Injection[m
+[32m+[m[32m        // DbContext dùng để truy vấn và lưu dữ liệu vào database[m
+[32m+[m[32m        public BookingController(ApplicationDbContext context)[m
+[32m+[m[32m        {[m
+[32m+[m[32m            _context = context;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        // ========== PHƯƠNG THỨC 1: HIỂN THỊ SƠ ĐỒ GHẾ ==========[m
+[32m+[m[32m        /// <summary>[m
+[32m+[m[32m        /// Hiển thị sơ đồ ghế của một suất chiếu[m
+[32m+[m[32m        ///[m[41m [m
+[32m+[m[32m        /// Tham số:[m
+[32m+[m[32m        ///   - showTimeId: ID của suất chiếu[m
+[32m+[m[32m        ///[m[41m [m
+[32m+[m[32m        /// Luồng:[m
+[32m+[m[32m        /// 1. Tìm ShowTime theo ID (kèm theo Movie, Cinema, Seats)[m
+[32m+[m[32m        /// 2. Lấy danh sách ID các ghế đã bị đặt (có trong Bookings)[m
+[32m+[m[32m        /// 3. Gửi dữ liệu tới View để hiển thị sơ đồ ghế:[m
+[32m+[m[32m        ///    - Ghế trống: màu xanh (có thể chọn)[m
+[32m+[m[32m        ///    - Ghế đã đặt: màu đỏ (bị disable)[m
+[32m+[m[32m        /// </summary>[m
+[32m+[m[32m        public IActionResult SelectSeats(int showTimeId)[m
+[32m+[m[32m        {[m
+[32m+[m[32m            // Bước 1: Lấy thông tin ShowTime từ database[m
+[32m+[m[32m            // Include() dùng để lấy kèm Movie, Cinema, và Seats liên quan[m
+[32m+[m[32m            var showTime = _context.ShowTimes[m
+[32m+[m[32m                .Include(s => s.Movie)      // Lấy tên phim[m
+[32m+[m[32m                .Include(s => s.Cinema)     // Lấy tên rạp[m
+[32m+[m[32m                .Include(s => s.Seats)      // Lấy danh sách ghế[m
+[32m+[m[32m                .FirstOrDefault(s => s.Id == showTimeId);[m
+[32m+[m
+[32m+[m[32m            // Kiểm tra nếu ShowTime không tồn tại[m
+[32m+[m[32m            if (showTime == null)[m
+[32m+[m[32m                return NotFound("Không tìm thấy suất chiếu");[m
+[32m+[m
+[32m+[m[32m            // Bước 2: Lấy danh sách ID các ghế đã được đặt[m
+[32m+[m[32m            // Tìm tất cả Booking của ShowTime này, rồi lấy SeatId[m
+[32m+[m[32m            var bookedSeatIds = _context.Bookings[m
+[32m+[m[32m                .Where(b => b.ShowTimeId == showTimeId)  // Chỉ lấy booking của suất chiếu này[m
+[32m+[m[32m                .Select(b => b.SeatId)                   // Lấy ID ghế[m
+[32m+[m[32m                .ToList();[m
+[32m+[m
+[32m+[m[32m            // Bước 3: Gửi dữ liệu tới View thông qua ViewBag[m
+[32m+[m[32m            // ViewBag là Dictionary để truyền dữ liệu từ Controller tới View[m
+[32m+[m[32m            ViewBag.ShowTime = showTime;[m
+[32m+[m[32m            ViewBag.Seats = showTime.Seats.ToList();[m
+[32m+[m[32m            ViewBag.BookedSeatIds = bookedSeatIds;[m
+[32m+[m
+[32m+[m[32m            return View();[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        // ========== PHƯƠNG THỨC 2: TẠO BOOKING (ĐẶT VÉ) ==========[m
+[32m+[m[32m        /// <summary>[m
+[32m+[m[32m        /// Xử lý khi người dùng chọn ghế và bấm "Xác nhận"[m
+[32m+[m[32m        ///[m[41m [m
+[32m+[m[32m        /// Tham số:[m
+[32m+[m[32m        ///   - showTimeId: ID suất chiếu[m
+[32m+[m[32m        ///   - seatIds: Array ID các ghế được chọn[m
+[32m+[m[32m        ///[m[41m [m
+[32m+[m[32m        /// Luồng:[m
+[32m+[m[32m        /// 1. Kiểm tra người dùng chọn ít nhất 1 ghế[m
+[32m+[m[32m        /// 2. Kiểm tra các ghế chọn có trống không[m
+[32m+[m[32m        /// 3. Nếu trống → Tạo Booking cho từng ghế[m
+[32m+[m[32m        /// 4. Lưu vào database[m
+[32m+[m[32m        /// 5. Redirect tới trang xem vé[m
+[32m+[m[32m        /// </summary>[m
+[32m+[m[32m        [HttpPost]  // Phương thức này nhận dữ liệu từ form POST[m
+[32m+[m[32m        public IActionResult Confirm(int showTimeId, int[] seatIds)[m
+[32m+[m[32m        {[m
+[32m+[m[32m            // Bước 1: Kiểm tra người dùng có chọn ghế không[m
+[32m+[m[32m            if (seatIds == null || seatIds.Length == 0)[m
+[32m+[m[32m            {[m
+[32m+[m[32m                // Nếu không chọn → lưu thông báo lỗi vào TempData[m
+[32m+[m[32m                // TempData dùng để lưu data tạm thời cho lần request tiếp theo[m
+[32m+[m[32m                TempData["Error"] = "Chọn ít nhất 1 ghế";[m
+[32m+[m[32m                return RedirectToAction("SelectSeats", new { showTimeId });[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            // Bước 2: Kiểm tra các ghế chọn có bị đặt rồi không[m
+[32m+[m[32m            // Nếu có ghế nào đã có booking → báo lỗi[m
+[32m+[m[32m            // FirstOrDefault() trả về phần tử đầu tiên nếu có, NULL nếu không có[m
+[32m+[m[32m            var booked = _context.Bookings[m
+[32m+[m[32m                .Where(b => b.ShowTimeId == showTimeId && seatIds.Contains(b.SeatId))[m
+[32m+[m[32m                .FirstOrDefault();[m
+[32m+[m
+[32m+[m[32m            if (booked != null)[m
+[32m+[m[32m            {[m
+[32m+[m[32m                TempData["Error"] = "Ghế này đã có người đặt";[m
+[32m+[m[32m                return RedirectToAction("SelectSeats", new { showTimeId });[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            // Bước 3: Tạo Booking cho từng ghế được chọn[m
+[32m+[m[32m            var userId = 1; // Tạm thời (sau sẽ lấy từ Identity/Login)[m
+[32m+[m[41m            [m
+[32m+[m[32m            foreach (var seatId in seatIds)[m
+[32m+[m[32m            {[m
+[32m+[m[32m                // Tạo object Booking mới[m
+[32m+[m[32m                var booking = new Booking[m
+[32m+[m[32m                {[m
+[32m+[m[32m                    UserId = userId,           // ID người dùng đặt vé[m
+[32m+[m[32m                    ShowTimeId = showTimeId,   // ID suất chiếu[m
+[32m+[m[32m                    SeatId = seatId,           // ID ghế được chọn[m
+[32m+[m[32m                    BookingDate = DateTime.Now // Thời gian đặt vé (ngày giờ hiện tại)[m
+[32m+[m[32m                };[m
+[32m+[m[41m                [m
+[32m+[m[32m                // Thêm Booking vào DbContext (chưa lưu vào DB lúc này)[m
+[32m+[m[32m                _context.Bookings.Add(booking);[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            // Bước 4: Lưu tất cả Bookings vào database[m
+[32m+[m[32m            // SaveChanges() thực thi tất cả các thay đổi (Add, Update, Delete)[m
+[32m+[m[32m            _context.SaveChanges();[m
+[32m+[m
+[32m+[m[32m            // Bước 5: Hiển thị thông báo thành công[m
+[32m+[m[32m            TempData["Success"] = "Đặt vé thành công!";[m
+[32m+[m[41m            [m
+[32m+[m[32m            // Chuyển hướng (Redirect) tớ
