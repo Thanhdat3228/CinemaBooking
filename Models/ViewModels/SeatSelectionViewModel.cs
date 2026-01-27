@@ -8,8 +8,8 @@ namespace CinemaBooking.Models.ViewModels
         public int SelectedSeatId { get; set; }
         public int UserId { get; set; }
 
-        public string MovieTitle { get; set; }
-        public string CinemaName { get; set; }
+        public string MovieTitle { get; set; } = string.Empty;
+        public string CinemaName { get; set; } = string.Empty;
         public DateTime TimeSlot { get; set; }
         public decimal Price { get; set; }
 
@@ -20,7 +20,8 @@ namespace CinemaBooking.Models.ViewModels
     public class SeatDTO
     {
         public int Id { get; set; }
-        public string SeatNumber { get; set; }
+        public string SeatNumber { get; set; } = string.Empty;
         public bool IsAvailable { get; set; }
     }
 }
+

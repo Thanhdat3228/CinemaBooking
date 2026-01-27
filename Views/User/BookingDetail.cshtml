@@ -1,0 +1,143 @@
+@model Booking
+
+@{
+    ViewData["Title"] = "Chi Tiết Đặt Vé";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <a asp-action="BookingHistory" asp-controller="User" class="btn btn-secondary mb-3">← Quay lại</a>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Chi Tiết Đặt Vé</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Thông tin phim -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            @if (!string.IsNullOrEmpty(Model.ShowTime.Movie.PosterUrl))
+                            {
+                                <img src="@Model.ShowTime.Movie.PosterUrl" alt="@Model.ShowTime.Movie.Title" 
+                                     class="img-fluid rounded" style="max-height: 300px; object-fit: cover;" />
+                            }
+                            else
+                            {
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center" 
+                                     style="height: 300px; color: #999;">
+                                    Không có hình ảnh
+                                </div>
+                            }
+                        </div>
+                        <div class="col-md-8">
+                            <h3>@Model.ShowTime.Movie.Title</h3>
+                            <p class="text-muted">@Model.ShowTime.Movie.Description</p>
+                            <hr />
+                            <div class="row mb-3">
+                                <div class="col-sm-4">
+                                    <strong>Rạp:</strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    @Model.ShowTime.Cinema.Name
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-4">
+                                    <strong>Thể loại:</strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    @Model.ShowTime.Movie.Genre
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-4">
+                                    <strong>Thời lượng:</strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    @Model.ShowTime.Movie.Duration phút
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <!-- Thông tin suất chiếu -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5>Thông Tin Suất Chiếu</h5>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>Ngày Chiếu:</strong></td>
+                                    <td>@Model.ShowTime.StartTime.ToString("dddd, dd/MM/yyyy")</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Giờ Chiếu:</strong></td>
+                                    <td>@Model.ShowTime.StartTime.ToString("HH:mm")</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Phòng:</strong></td>
+                                    <td>@Model.ShowTime.RoomNumber</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Thông Tin Vé</h5>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>Ghế:</strong></td>
+                                    <td>
+                                        <span class="badge bg-info">@Model.Seat.SeatNumber</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Loại Ghế:</strong></td>
+                                    <td>@Model.Seat.SeatType</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Giá:</strong></td>
+                                    <td><strong class="text-danger">@Model.Seat.Price.ToString("C0")</strong></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <!-- Thông tin đặt vé -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h5>Thông Tin Đặt Vé</h5>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>Mã Đặt Vé:</strong></td>
+                                    <td>#BK-@Model.Id.ToString("D6")</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Ngày Đặt:</strong></td>
+                                    <td>@Model.BookingDate.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    
+
+                    <!-- Nút hành động -->
+                    <div class="mt-4">
+                        @if (Model.ShowTime.StartTime > DateTime.Now)
+                        {
+                            <form asp-action="CancelBooking" asp-controller="User" method="post" style="display:inline;"
+                                  onsubmit="return confirm('Bạn có chắc chắn muốn hủy vé này?');">
+                                <input type="hidden" name="id" value="@Model.Id" />
+                                <button type="submit" class="btn btn-danger">Hủy Vé</button>
+                            </form>
+                        }
+                        <a asp-action="BookingHistory" asp-controller="User" class="btn btn-secondary">Quay Lại</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

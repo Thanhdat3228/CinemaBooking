@@ -1,0 +1,190 @@
+@{
+    ViewData["Title"] = "Trang Tổng Quan";
+    var user = ViewBag.User as User;
+    var totalBookings = ViewBag.TotalBookings as int?;
+    var upcomingBookings = ViewBag.UpcomingBookings as int?;
+    var pastBookings = ViewBag.PastBookings as int?;
+    var recentBookings = ViewBag.RecentBookings as List<Booking>;
+}
+
+<div class="container mt-5 mb-5">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card bg-primary text-white shadow-sm">
+                <div class="card-body">
+                    <h2>Xin chào, @user?.FullName!</h2>
+                    <p class="mb-0">Chào mừng trở lại hệ thống đặt vé xem phim</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-0">Tổng Vé Đã Đặt</h6>
+                            <h2 class="text-primary">@totalBookings</h2>
+                        </div>
+                        <div style="font-size: 48px; color: #0d6efd; opacity: 0.2;">
+                            🎬
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-0">Vé Sắp Tới</h6>
+                            <h2 class="text-success">@upcomingBookings</h2>
+                        </div>
+                        <div style="font-size: 48px; color: #198754; opacity: 0.2;">
+                            📅
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-0">Vé Đã Xem</h6>
+                            <h2 class="text-warning">@pastBookings</h2>
+                        </div>
+                        <div style="font-size: 48px; color: #ffc107; opacity: 0.2;">
+                            ✓
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Bookings -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Các Vé Gần Đây</h5>
+                </div>
+                <div class="card-body">
+                    @if (recentBookings != null && recentBookings.Count > 0)
+                    {
+                        <div class="row">
+                            @foreach (var booking in recentBookings)
+                            {
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-light">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    @if (!string.IsNullOrEmpty(booking.ShowTime.Movie.PosterUrl))
+                                                    {
+                                                        <img src="@booking.ShowTime.Movie.PosterUrl" alt="@booking.ShowTime.Movie.Title" 
+                                                             class="img-fluid rounded" style="max-height: 100px; object-fit: cover;" />
+                                                    }
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <h6>@booking.ShowTime.Movie.Title</h6>
+                                                    <p class="text-muted small mb-2">
+                                                        @booking.ShowTime.Cinema.Name | Phòng @booking.ShowTime.RoomNumber
+                                                    </p>
+                                                    <p class="text-muted small mb-2">
+                                                        📅 @booking.ShowTime.StartTime.ToString("dd/MM/yyyy HH:mm")
+                                                    </p>
+                                                    <p class="mb-2">
+                                                        <span class="badge bg-info">Ghế @booking.Seat.SeatNumber</span>
+                                                    </p>
+                                                    @if (booking.ShowTime.StartTime > DateTime.Now)
+                                                    {
+                                                        <small class="text-success">✓ Vé còn hiệu lực</small>
+                                                    }
+                                                    else
+                                                    {
+                                                        <small class="text-secondary">Suất chiếu đã kết thúc</small>
+                                                    }
+                                                    <br />
+                                                    <a asp-action="BookingDetail" asp-controller="User" 
+                                                       asp-route-id="@booking.Id" class="btn btn-sm btn-outline-primary mt-2">
+                                                        Xem Chi Tiết
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Chưa có vé nào. <a asp-controller="Movies" asp-action="Index">Chọn phim để đặt vé ngay!</a></p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Hành Động Nhanh</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a asp-controller="Movies" asp-action="Index" class="btn btn-primary btn-lg w-100">
+                                🎬 Chọn Phim Để Đặt Vé
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a asp-action="BookingHistory" asp-controller="User" class="btn btn-outline-primary btn-lg w-100">
+                                📋 Xem Lịch Sử Đặt Vé
+                            </a>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a asp-action="Index" asp-controller="User" class="btn btn-outline-secondary btn-lg w-100">
+                                👤 Thông Tin Cá Nhân
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a asp-action="ChangePassword" asp-controller="Auth" class="btn btn-outline-secondary btn-lg w-100">
+                                🔒 Đổi Mật Khẩu
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .btn-lg {
+        padding: 12px;
+        font-size: 16px;
+    }
+</style>

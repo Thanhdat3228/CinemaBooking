@@ -9,7 +9,7 @@ namespace CinemaBooking.Models
 
         // Khóa ngoại tới Booking
         public int BookingId { get; set; }
-        public Booking Booking { get; set; }
+        public Booking? Booking { get; set; }
 
         // Giá vé
         public decimal Price { get; set; }

@@ -1,0 +1,140 @@
+@model List<Booking>
+
+@{
+    ViewData["Title"] = "Lịch Sử Đặt Vé";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <!-- Sidebar Menu -->
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="mb-3">Menu</h5>
+                    <nav class="nav flex-column">
+                        <a class="nav-link" asp-action="Dashboard" asp-controller="User">Trang Tổng Quan</a>
+                        <a class="nav-link" asp-action="Index" asp-controller="User">Thông Tin Cá Nhân</a>
+                        <a class="nav-link" asp-action="Edit" asp-controller="User">Chỉnh Sửa Thông Tin</a>
+                        <a class="nav-link active" asp-action="BookingHistory" asp-controller="User">Lịch Sử Đặt Vé</a>
+                        <a class="nav-link" asp-action="ChangePassword" asp-controller="Auth">Đổi Mật Khẩu</a>
+                        <hr />
+                        <a class="nav-link text-danger" asp-action="Logout" asp-controller="Auth">Đăng Xuất</a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Lịch Sử Đặt Vé</h4>
+                </div>
+                <div class="card-body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    @if (Model.Count == 0)
+                    {
+                        <div class="alert alert-info" role="alert">
+                            <h5>Chưa có vé nào</h5>
+                            <p>Bạn chưa đặt vé nào. Hãy <a asp-controller="Movies" asp-action="Index" class="alert-link">chọn phim</a> để đặt vé ngay!</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Phim</th>
+                                        <th>Rạp</th>
+                                        <th>Ghế</th>
+                                        <th>Ngày Chiếu</th>
+                                        <th>Giờ Chiếu</th>
+                                        <th>Ngày Đặt</th>
+                                        <th>Hành Động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var booking in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@booking.ShowTime.Movie.Title</strong>
+                                            </td>
+                                            <td>@booking.ShowTime.Cinema.Name</td>
+                                            <td>
+                                                <span class="badge bg-info">@booking.Seat.SeatNumber</span>
+                                            </td>
+                                            <td>@booking.ShowTime.StartTime.ToString("dd/MM/yyyy")</td>
+                                            <td>@booking.ShowTime.StartTime.ToString("HH:mm")</td>
+                                            <td>@booking.BookingDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                            <td>
+                                                <a asp-action="BookingDetail" asp-controller="User" asp-route-id="@booking.Id" 
+                                                   class="btn btn-sm btn-info" title="Xem chi tiết">
+                                                    <i class="bi bi-eye"></i> Xem
+                                                </a>
+                                                @if (booking.ShowTime.StartTime > DateTime.Now)
+                                                {
+                                                    <form asp-action="CancelBooking" asp-controller="User" method="post" 
+                                                          style="display:inline;" 
+                                                          onsubmit="return confirm('Bạn có chắc chắn muốn hủy vé này?');">
+                                                        <input type="hidden" name="id" value="@booking.Id" />
+                                                        <button type="submit" class="btn btn-sm btn-danger" title="Hủy vé">
+                                                            <i class="bi bi-trash"></i> Hủy
+                                                        </button>
+                                                    </form>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Đã chiếu</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .nav-link {
+        color: #495057;
+        text-decoration: none;
+    }
+
+    .nav-link:hover {
+        color: #0d6efd;
+        background-color: #f8f9fa;
+        border-radius: 4px;
+    }
+
+    .nav-link.active {
+        color: #0d6efd;
+        font-weight: 500;
+    }
+
+    .nav-link.text-danger:hover {
+        color: #dc3545 !important;
+        background-color: #f8f9fa;
+    }
+</style>

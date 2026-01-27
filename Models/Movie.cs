@@ -11,6 +11,9 @@
         public string? Genre { get; set; }
 
         public int DurationMinutes { get; set; }
+        
+        // Thêm Duration alias để tiện sử dụng trong Views
+        public int Duration { get { return DurationMinutes; } }
 
         public string? Rating { get; set; }
 

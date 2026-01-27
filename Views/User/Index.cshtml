@@ -1,0 +1,139 @@
+@model User
+
+@{
+    ViewData["Title"] = "Trang Cá Nhân";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <!-- Sidebar Menu -->
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="avatar-placeholder mb-2" style="width: 100px; height: 100px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; color: white; font-size: 36px;">
+                            @Model.FullName.First()
+                        </div>
+                        <h5>@Model.FullName</h5>
+                        <p class="text-muted small">@Model.Email</p>
+                    </div>
+                    <hr />
+                    <nav class="nav flex-column">
+                        <a class="nav-link active" href="#">Thông Tin Cá Nhân</a>
+                        <a class="nav-link" asp-action="Edit" asp-controller="User">Chỉnh Sửa Thông Tin</a>
+                        <a class="nav-link" asp-action="ChangePassword" asp-controller="Auth">Đổi Mật Khẩu</a>
+                        <a class="nav-link" asp-action="BookingHistory" asp-controller="User">Lịch Sử Đặt Vé</a>
+                        <a class="nav-link" asp-action="Dashboard" asp-controller="User">Trang Tổng Quan</a>
+                        <hr />
+                        <a class="nav-link text-danger" asp-action="Logout" asp-controller="Auth">Đăng Xuất</a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Thông Tin Cá Nhân</h4>
+                </div>
+                <div class="card-body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <h6 class="mb-0">Họ Và Tên</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                            <strong>@Model.FullName</strong>
+                        </div>
+                    </div>
+                    <hr />
+
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <h6 class="mb-0">Email</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                            @Model.Email
+                        </div>
+                    </div>
+                    <hr />
+
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <h6 class="mb-0">Số Điện Thoại</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                            @(string.IsNullOrEmpty(Model.PhoneNumber) ? "Chưa cập nhật" : Model.PhoneNumber)
+                        </div>
+                    </div>
+                    <hr />
+
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <h6 class="mb-0">Ngày Tạo</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                            @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                        </div>
+                    </div>
+                    <hr />
+
+                    @if (Model.UpdatedAt.HasValue)
+                    {
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Cập Nhật Lần Cuối</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                @Model.UpdatedAt.Value.ToString("dd/MM/yyyy HH:mm")
+                            </div>
+                        </div>
+                        <hr />
+                    }
+
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <a asp-action="Edit" asp-controller="User" class="btn btn-primary">Chỉnh Sửa Thông Tin</a>
+                            <a asp-action="ChangePassword" asp-controller="Auth" class="btn btn-warning">Đổi Mật Khẩu</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .avatar-placeholder {
+        font-weight: bold;
+    }
+
+    .nav-link {
+        color: #495057;
+        text-decoration: none;
+    }
+
+    .nav-link:hover {
+        color: #0d6efd;
+        background-color: #f8f9fa;
+        border-radius: 4px;
+    }
+
+    .nav-link.active {
+        color: #0d6efd;
+        font-weight: 500;
+    }
+
+    .nav-link.text-danger:hover {
+        color: #dc3545 !important;
+        background-color: #f8f9fa;
+    }
+</style>

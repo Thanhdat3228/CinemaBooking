@@ -9,6 +9,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseMySql
     ));
 builder.Services.AddControllersWithViews();
 
+// Thêm Session
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromHours(2);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
@@ -22,6 +30,10 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
 }
 app.UseStaticFiles();
+
+// Sử dụng Session
+app.UseSession();
+
 app.UseRouting();
 app.UseAuthorization();
 
