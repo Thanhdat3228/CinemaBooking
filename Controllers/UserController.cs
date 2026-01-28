@@ -190,6 +190,7 @@ namespace CinemaBooking.Controllers
                     .ThenInclude(st => st.Movie)
                 .Include(b => b.ShowTime)
                     .ThenInclude(st => st.Cinema)
+                .Include(b => b.Seat)
                 .OrderByDescending(b => b.BookingDate)
                 .Take(5)
                 .ToList();
@@ -220,7 +221,7 @@ namespace CinemaBooking.Controllers
             }
 
             // Kiểm tra nếu suất chiếu chưa bắt đầu mới có thể hủy
-            if (booking.ShowTime.StartTime <= DateTime.Now)
+            if (booking.ShowTime.TimeSlot >= DateTime.Now)
             {
                 TempData["ErrorMessage"] = "Không thể hủy vé sau khi suất chiếu bắt đầu!";
                 return RedirectToAction(nameof(BookingHistory));
