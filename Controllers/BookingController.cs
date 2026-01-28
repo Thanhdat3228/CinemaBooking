@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CinemaBooking.Controllers
 {
+    [AuthorizeSession]  // Bảo vệ tất cả action trong controller
     public class BookingsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -32,7 +33,7 @@ namespace CinemaBooking.Controllers
         /// </summary>
         public IActionResult SelectSeats(int showTimeId)
         {
-            // Bước 1: Lấy thông tin ShowTime từ database
+            // Lấy thông tin ShowTime từ database
             // Include() dùng để lấy kèm Movie, Cinema, và Seats liên quan
             var showTime = _context.ShowTimes
                 .Include(s => s.Movie)      // Lấy tên phim
@@ -44,15 +45,13 @@ namespace CinemaBooking.Controllers
             if (showTime == null)
                 return NotFound("Không tìm thấy suất chiếu");
 
-            // Bước 2: Lấy danh sách ID các ghế đã được đặt
-            // Tìm tất cả Booking của ShowTime này, rồi lấy SeatId
+            // Lấy danh sách ID các ghế đã được đặt
             var bookedSeatIds = _context.Bookings
-                .Where(b => b.ShowTimeId == showTimeId)  // Chỉ lấy booking của suất chiếu này
-                .Select(b => b.SeatId)                   // Lấy ID ghế
+                .Where(b => b.ShowTimeId == showTimeId)
+                .Select(b => b.SeatId)
                 .ToList();
 
-            // Bước 3: Gửi dữ liệu tới View thông qua ViewBag
-            // ViewBag là Dictionary để truyền dữ liệu từ Controller tới View
+            // Gửi dữ liệu tới View thông qua ViewBag
             ViewBag.ShowTime = showTime;
             ViewBag.Seats = showTime.Seats.ToList();
             ViewBag.BookedSeatIds = bookedSeatIds;

@@ -44,15 +44,12 @@
                         <!-- Button hủy vé -->
                         <td>
                             <!-- Form POST gửi tới action CancelBooking -->
-                            <form method="post" action="/Booking/CancelBooking" style="display: inline;">
+                            <form method="post" action="/Bookings/CancelBooking" style="display: inline;">
                                 <!-- Hidden input: gửi ID vé cần hủy -->
                                 <input type="hidden" name="bookingId" value="@booking.Id" />
                                 
-                                <!-- Button hủy vé với xác nhận -->
-                                <!-- onclick="return confirm(...)" hiển thị hộp thoại xác nhận -->
-                                <button type="submit" 
-                                        class="btn btn-sm btn-danger" 
-                                        onclick="return confirm('Chắc chắn hủy vé này?')">
+                                <!-- Button hủy vé -->
+                                <button type="submit" class="btn btn-sm btn-danger">
                                     ❌ Hủy vé
                                 </button>
                             </form>
@@ -66,3 +63,29 @@
     <!-- Link quay về trang chủ -->
     <a href="/" class="btn btn-secondary mt-3">🏠 Quay về trang chủ</a>
 </div>
+
+<!-- SweetAlert2 - Custom Dialog -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Bắt sự kiện submit form
+    document.querySelectorAll('form[action="/Bookings/CancelBooking"]').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();  // Dừng gửi form
+            
+            Swal.fire({
+                title: 'Xác nhận hủy vé',
+                text: 'Bạn chắc chắn muốn hủy vé này không?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',  // Màu đỏ
+                cancelButtonColor: '#6c757d',   // Màu xám
+                confirmButtonText: 'Hủy vé',
+                cancelButtonText: 'Không'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();  // Gửi form nếu xác nhận
+                }
+            });
+        });
+    });
+</script>

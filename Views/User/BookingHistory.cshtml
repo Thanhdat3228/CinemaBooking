@@ -80,15 +80,15 @@
                                             <td>
                                                 <span class="badge bg-info">@booking.Seat.SeatNumber</span>
                                             </td>
-                                            <td>@booking.ShowTime.StartTime.ToString("dd/MM/yyyy")</td>
-                                            <td>@booking.ShowTime.StartTime.ToString("HH:mm")</td>
+                                            <td>@booking.ShowTime.TimeSlot.ToString("dd/MM/yyyy")</td>
+                                            <td>@booking.ShowTime.TimeSlot.ToString("HH:mm")</td>
                                             <td>@booking.BookingDate.ToString("dd/MM/yyyy HH:mm")</td>
                                             <td>
                                                 <a asp-action="BookingDetail" asp-controller="User" asp-route-id="@booking.Id" 
                                                    class="btn btn-sm btn-info" title="Xem chi tiết">
                                                     <i class="bi bi-eye"></i> Xem
                                                 </a>
-                                                @if (booking.ShowTime.StartTime > DateTime.Now)
+                                                @if (booking.ShowTime.TimeSlot > DateTime.Now)
                                                 {
                                                     <form asp-action="CancelBooking" asp-controller="User" method="post" 
                                                           style="display:inline;" 
