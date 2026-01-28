@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CinemaBooking.Controllers
 {
-    public class BookingController : Controller
+    public class BookingsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
         // Constructor: Nhận DbContext từ Dependency Injection
         // DbContext dùng để truy vấn và lưu dữ liệu vào database
-        public BookingController(ApplicationDbContext context)
+        public BookingsController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -78,6 +78,14 @@ namespace CinemaBooking.Controllers
         [HttpPost]  // Phương thức này nhận dữ liệu từ form POST
         public IActionResult Confirm(int showTimeId, int[] seatIds)
         {
+            // Kiểm tra người dùng đã đăng nhập
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                TempData["Error"] = "Vui lòng đăng nhập để đặt vé";
+                return RedirectToAction("Login", "Auth");
+            }
+
             // Bước 1: Kiểm tra người dùng có chọn ghế không
             if (seatIds == null || seatIds.Length == 0)
             {
@@ -101,14 +109,13 @@ namespace CinemaBooking.Controllers
             }
 
             // Bước 3: Tạo Booking cho từng ghế được chọn
-            var userId = 1; // Tạm thời (sau sẽ lấy từ Identity/Login)
             
             foreach (var seatId in seatIds)
             {
                 // Tạo object Booking mới
                 var booking = new Booking
                 {
-                    UserId = userId,           // ID người dùng đặt vé
+                    UserId = userId.Value,           // ID người dùng đặt vé
                     ShowTimeId = showTimeId,   // ID suất chiếu
                     SeatId = seatId,           // ID ghế được chọn
                     BookingDate = DateTime.Now // Thời gian đặt vé (ngày giờ hiện tại)
@@ -141,9 +148,13 @@ namespace CinemaBooking.Controllers
         /// </summary>
         public IActionResult MyTickets()
         {
-            // Bước 1: Lấy UserId của người dùng (tạm thời hardcode = 1)
-            // Sau này sẽ: var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            var userId = 1;
+            // Kiểm tra người dùng đã đăng nhập
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                TempData["Error"] = "Vui lòng đăng nhập";
+                return RedirectToAction("Login", "Auth");
+            }
             
             // Bước 2: Tìm tất cả Booking của user này
             // Include() dùng để load dữ liệu liên quan (ShowTime, Movie, Seat)
