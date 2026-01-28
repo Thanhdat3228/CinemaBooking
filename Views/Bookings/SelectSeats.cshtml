@@ -40,7 +40,7 @@
                     <strong style="font-size: 18px;">@row.Key</strong>
                     
                     <!-- Hiển thị từng ghế trong hàng -->
-                    @foreach (var seat in row.OrderBy(s => s.SeatNumber))
+                    @foreach (var seat in row.OrderBy(s => int.Parse(s.SeatNumber.Substring(1))))
                     {
                         // Kiểm tra ghế này đã được đặt chưa
                         var isBooked = bookedSeatIds.Contains(seat.Id);
