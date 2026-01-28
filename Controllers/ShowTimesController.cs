@@ -67,15 +67,11 @@ namespace CinemaBooking.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(ShowTime showTime)
+        public IActionResult Edit(ShowTime model)
         {
-            if (!ModelState.IsValid)
-            {
-                ViewBag.MovieId = new SelectList(_context.Movies, "Id", "Title", showTime.MovieId);
-                return View(showTime);
-            }
-
-            _context.ShowTimes.Update(showTime);
+            var showTime=_context.ShowTimes.FirstOrDefault(s=>s.Id==model.Id);
+            if(showTime==null) return NotFound();
+            showTime.TimeSlot=model.TimeSlot;
             _context.SaveChanges();
             return RedirectToAction("Index");
         }
